@@ -21,10 +21,11 @@ medicine_names = (
     .tolist()
 )
 
-def find_best_match(ocr_text, threshold=70):
+def find_best_match(ocr_text, threshold=85):
     """
     Finds best matching medicine name from OCR text
-    by checking each line separately.
+    by checking each line separately and applying
+    a strong confidence filter.
     """
     if not ocr_text:
         return None, 0
@@ -50,10 +51,12 @@ def find_best_match(ocr_text, threshold=70):
             best_match = match
             best_score = score
 
+    # ✅ STRONG CONFIDENCE FILTER
     if best_score >= threshold:
         return best_match, best_score
 
     return None, best_score
+
 
 
 
