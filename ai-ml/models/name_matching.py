@@ -21,24 +21,40 @@ medicine_names = (
     .tolist()
 )
 
-def find_best_match(ocr_text, threshold=80):
+def find_best_match(ocr_text, threshold=70):
     """
-    Finds best matching medicine name from dataset
+    Finds best matching medicine name from OCR text
+    by checking each line separately.
     """
     if not ocr_text:
         return None, 0
 
     ocr_text = ocr_text.lower()
+    lines = ocr_text.split("\n")
 
-    match, score, _ = process.extractOne(
-        ocr_text,
-        medicine_names,
-        scorer=fuzz.token_sort_ratio
-    )
+    best_match = None
+    best_score = 0
 
-    if score >= threshold:
-        return match, score
-    return None, score
+    for line in lines:
+        line = line.strip()
+        if len(line) < 4:
+            continue
+
+        match, score, _ = process.extractOne(
+            line,
+            medicine_names,
+            scorer=fuzz.partial_ratio
+        )
+
+        if score > best_score:
+            best_match = match
+            best_score = score
+
+    if best_score >= threshold:
+        return best_match, best_score
+
+    return None, best_score
+
 
 
 # 🔍 Standalone test
