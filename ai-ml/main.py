@@ -24,7 +24,10 @@ def analyze_medicine_image(image_path):
 
 # 🔍 Test locally / Colab
 if __name__ == "__main__":
-    result = analyze_medicine_image(
+    test_image = os.path.join(
+        os.path.dirname(__file__),
         "data/medicine_images/dolo650_strip.jpg"
     )
+
+    result = analyze_medicine_image(test_image)
     print(result)
