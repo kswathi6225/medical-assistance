@@ -10,7 +10,10 @@ from utils.image_quality_check import is_image_clear
 from models.name_matching import find_best_match
 
 
-IMAGE_DIR = "../data/medicine_images"
+IMAGE_DIR = os.path.join(
+    os.path.dirname(__file__),
+    "../data/medicine_images"
+)
 
 for img_name in os.listdir(IMAGE_DIR):
     img_path = os.path.join(IMAGE_DIR, img_name)
