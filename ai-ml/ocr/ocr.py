@@ -1,9 +1,14 @@
+import sys
+import os
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+
 import cv2
 import pytesseract
-import os
 
 from utils.image_quality_check import is_image_clear
 from models.name_matching import find_best_match
+
 
 IMAGE_DIR = "../data/medicine_images"
 
