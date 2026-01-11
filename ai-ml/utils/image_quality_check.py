@@ -1,40 +1,14 @@
-import pandas as pd
-from rapidfuzz import process, fuzz
+import cv2
 
-# Load medicine names from REAL dataset
-DATA_PATH = "../data/medical_text_real/medicines_master.csv"
-
-df = pd.read_csv(DATA_PATH)
-
-# Normalize medicine names
-medicine_names = df["name"].str.lower().dropna().unique().tolist()
-
-def find_best_match(ocr_text, threshold=80):
+def is_image_clear(image_path, threshold=100):
     """
-    Finds best matching medicine name from dataset
+    Checks if an image is clear using Laplacian variance.
+    Returns True if image is clear, False otherwise.
     """
-    ocr_text = ocr_text.lower()
+    img = cv2.imread(image_path, cv2.IMREAD_GRAYSCALE)
 
-    match, score, _ = process.extractOne(
-        ocr_text,
-        medicine_names,
-        scorer=fuzz.token_sort_ratio
-    )
+    if img is None:
+        return False
 
-    if score >= threshold:
-        return match, score
-    else:
-        return None, score
-
-
-# 🔍 Test example
-if __name__ == "__main__":
-    test_texts = [
-        "Paracelamol 650 mg",
-        "Crocn tablet",
-        "Azithromicin"
-    ]
-
-    for text in test_texts:
-        result, score = find_best_match(text)
-        print(f"OCR: {text} → Match: {result}, Score: {score}")
+    laplacian_var = cv2.Laplacian(img, cv2.CV_64F).var()
+    return laplacian_var > threshold

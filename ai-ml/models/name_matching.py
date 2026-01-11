@@ -1,18 +1,33 @@
 import pandas as pd
 from rapidfuzz import process, fuzz
+import os
 
-# Load medicine names from REAL dataset
-DATA_PATH = "../data/medical_text_real/medicines_master.csv"
+# Absolute path to dataset (SAFE for Colab + local)
+DATA_PATH = os.path.join(
+    os.path.dirname(__file__),
+    "../data/medical_text_real/A_Z_medicines_dataset_of_India.csv"
+)
 
+# Load dataset
 df = pd.read_csv(DATA_PATH)
 
 # Normalize medicine names
-medicine_names = df["name"].str.lower().dropna().unique().tolist()
+medicine_names = (
+    df["name"]
+    .astype(str)
+    .str.lower()
+    .dropna()
+    .unique()
+    .tolist()
+)
 
 def find_best_match(ocr_text, threshold=80):
     """
     Finds best matching medicine name from dataset
     """
+    if not ocr_text:
+        return None, 0
+
     ocr_text = ocr_text.lower()
 
     match, score, _ = process.extractOne(
@@ -23,11 +38,10 @@ def find_best_match(ocr_text, threshold=80):
 
     if score >= threshold:
         return match, score
-    else:
-        return None, score
+    return None, score
 
 
-# 🔍 Test example
+# 🔍 Standalone test
 if __name__ == "__main__":
     test_texts = [
         "Paracelamol 650 mg",
